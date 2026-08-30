@@ -1,0 +1,192 @@
+[
+  {
+    "id": "name",
+    "title": "Name",
+    "type": "name"
+  },
+  {
+    "id": "text_mm6qrxz1",
+    "title": "Customer Name Code",
+    "type": "text"
+  },
+  {
+    "id": "text_mm6qa33v",
+    "title": "Serial #",
+    "type": "text"
+  },
+  {
+    "id": "dropdown_mm6qh0w",
+    "title": "Nature of Work",
+    "type": "dropdown"
+  },
+  {
+    "id": "text_mm6qeyzn",
+    "title": "Last Executed Month of Recurring Project",
+    "type": "text"
+  },
+  {
+    "id": "color_mm6qgkne",
+    "title": "Execution Status",
+    "type": "status"
+  },
+  {
+    "id": "date_mm6qwn0h",
+    "title": "Data Delivery Date",
+    "type": "date"
+  },
+  {
+    "id": "date_mm6qxyk7",
+    "title": "Date of PO/LOI",
+    "type": "date"
+  },
+  {
+    "id": "dropdown_mm6q5znw",
+    "title": "Document Type",
+    "type": "dropdown"
+  },
+  {
+    "id": "date_mm6q7gbz",
+    "title": "Probable Start Date",
+    "type": "date"
+  },
+  {
+    "id": "date_mm6q131x",
+    "title": "Probable End Date",
+    "type": "date"
+  },
+  {
+    "id": "text_mm6q67mq",
+    "title": "BD/KAM Personnel code",
+    "type": "text"
+  },
+  {
+    "id": "dropdown_mm6qajnp",
+    "title": "Sector",
+    "type": "dropdown"
+  },
+  {
+    "id": "text_mm6qp5en",
+    "title": "Type of Work",
+    "type": "text"
+  },
+  {
+    "id": "dropdown_mm6q3ww6",
+    "title": "Skylark Platform Involved",
+    "type": "dropdown"
+  },
+  {
+    "id": "date_mm6q5w4q",
+    "title": "Last Invoice Date",
+    "type": "date"
+  },
+  {
+    "id": "text_mm6qgcv5",
+    "title": "Latest Invoice No.",
+    "type": "text"
+  },
+  {
+    "id": "numeric_mm6qmdg3",
+    "title": "Amount Excl GST",
+    "type": "numbers"
+  },
+  {
+    "id": "numeric_mm6qn5y3",
+    "title": "Amount Incl GST",
+    "type": "numbers"
+  },
+  {
+    "id": "numeric_mm6qhphn",
+    "title": "Billed Value Excl GST",
+    "type": "numbers"
+  },
+  {
+    "id": "numeric_mm6q9mfd",
+    "title": "Billed Value Incl GST",
+    "type": "numbers"
+  },
+  {
+    "id": "numeric_mm6qsg66",
+    "title": "Collected Amount Incl GST",
+    "type": "numbers"
+  },
+  {
+    "id": "numeric_mm6q2b71",
+    "title": "Amount to be Billed Excl GST",
+    "type": "numbers"
+  },
+  {
+    "id": "numeric_mm6qehza",
+    "title": "Amount to be Billed Incl GST",
+    "type": "numbers"
+  },
+  {
+    "id": "numeric_mm6qe2jf",
+    "title": "Amount Receivable",
+    "type": "numbers"
+  },
+  {
+    "id": "color_mm6qktzd",
+    "title": "AR Priority Account",
+    "type": "status"
+  },
+  {
+    "id": "numeric_mm6qpb87",
+    "title": "Quantity by Ops",
+    "type": "numbers"
+  },
+  {
+    "id": "text_mm6q74tq",
+    "title": "Quantities as per PO",
+    "type": "text"
+  },
+  {
+    "id": "numeric_mm6q32fe",
+    "title": "Quantity Billed till Date",
+    "type": "numbers"
+  },
+  {
+    "id": "numeric_mm6qxx5z",
+    "title": "Balance in Quantity",
+    "type": "numbers"
+  },
+  {
+    "id": "color_mm6q8z2v",
+    "title": "Invoice Status",
+    "type": "status"
+  },
+  {
+    "id": "text_mm6q7f4",
+    "title": "Expected Billing Month",
+    "type": "text"
+  },
+  {
+    "id": "text_mm6qcv3j",
+    "title": "Actual Billing Month",
+    "type": "text"
+  },
+  {
+    "id": "text_mm6q3ygk",
+    "title": "Actual Collection Month",
+    "type": "text"
+  },
+  {
+    "id": "color_mm6qxbc5",
+    "title": "WO Status (billed)",
+    "type": "status"
+  },
+  {
+    "id": "color_mm6q6ecr",
+    "title": "Collection Status",
+    "type": "status"
+  },
+  {
+    "id": "date_mm6qfpc7",
+    "title": "Collection Date",
+    "type": "date"
+  },
+  {
+    "id": "color_mm6qpby2",
+    "title": "Billing Status",
+    "type": "status"
+  }
+]

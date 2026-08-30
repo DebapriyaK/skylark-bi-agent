@@ -1,0 +1,62 @@
+[
+  {
+    "id": "name",
+    "title": "Name",
+    "type": "name"
+  },
+  {
+    "id": "text_mm6q5yvg",
+    "title": "Owner Code",
+    "type": "text"
+  },
+  {
+    "id": "text_mm6qzr7v",
+    "title": "Client Code",
+    "type": "text"
+  },
+  {
+    "id": "color_mm6qddzv",
+    "title": "Deal Status",
+    "type": "status"
+  },
+  {
+    "id": "date_mm6qdww1",
+    "title": "Close Date (A)",
+    "type": "date"
+  },
+  {
+    "id": "color_mm6q4x1e",
+    "title": "Closure Probability",
+    "type": "status"
+  },
+  {
+    "id": "numeric_mm6q78be",
+    "title": "Masked Deal Value",
+    "type": "numbers"
+  },
+  {
+    "id": "date_mm6qkwwz",
+    "title": "Tentative Close Date",
+    "type": "date"
+  },
+  {
+    "id": "color_mm6q51vg",
+    "title": "Deal Stage",
+    "type": "status"
+  },
+  {
+    "id": "text_mm6qekv7",
+    "title": "Product Deal",
+    "type": "text"
+  },
+  {
+    "id": "dropdown_mm6qhhpv",
+    "title": "Sector/Service",
+    "type": "dropdown"
+  },
+  {
+    "id": "date_mm6qqf48",
+    "title": "Created Date",
+    "type": "date"
+  }
+]
