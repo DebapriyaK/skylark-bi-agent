@@ -1,4 +1,5 @@
 import os
+import re
 
 import streamlit as st
 from dotenv import load_dotenv
@@ -27,6 +28,22 @@ if missing_secrets:
 
 from agent import chat
 
+
+def render_assistant_message(content):
+    parts = re.split(r"(\\\[.*?\\\]|\$\$.*?\$\$)", content, flags=re.DOTALL)
+    for part in parts:
+        if not part:
+            continue
+
+        stripped = part.strip()
+        if stripped.startswith("\\[") and stripped.endswith("\\]"):
+            st.latex(stripped[2:-2].strip())
+        elif stripped.startswith("$$") and stripped.endswith("$$"):
+            st.latex(stripped[2:-2].strip())
+        else:
+            st.markdown(part)
+
+
 st.markdown(
     """
     <style>
@@ -49,7 +66,10 @@ if "display_messages" not in st.session_state:
 
 for msg in st.session_state.display_messages:
     with st.chat_message(msg["role"]):
-        st.markdown(msg["content"])
+        if msg["role"] == "assistant":
+            render_assistant_message(msg["content"])
+        else:
+            st.markdown(msg["content"])
 
 user_input = st.chat_input("Ask about pipeline, deals, work orders...")
 
@@ -61,6 +81,6 @@ if user_input:
     with st.chat_message("assistant"):
         with st.spinner("Checking monday.com..."):
             answer, st.session_state.history = chat(user_input, st.session_state.history)
-        st.markdown(answer)
+        render_assistant_message(answer)
 
     st.session_state.display_messages.append({"role": "assistant", "content": answer})
