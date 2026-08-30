@@ -1,7 +1,17 @@
+import os
+
 import streamlit as st
-from agent import chat
+from dotenv import load_dotenv
 
 st.set_page_config(page_title="Skylark BI Agent", page_icon="📊", layout="centered")
+
+load_dotenv()
+
+for secret_name in ("OPENAI_API_KEY", "MONDAY_API_TOKEN"):
+    if not os.getenv(secret_name) and secret_name in st.secrets:
+        os.environ[secret_name] = str(st.secrets[secret_name])
+
+from agent import chat
 
 st.markdown(
     """
