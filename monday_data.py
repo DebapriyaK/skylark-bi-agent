@@ -1,7 +1,6 @@
 import os
 import requests
 from dotenv import load_dotenv
-import json
 import re
 
 load_dotenv()
@@ -13,7 +12,6 @@ headers = {"Authorization": API_TOKEN, "Content-Type": "application/json"}
 WORK_ORDERS_BOARD_ID = "5030965244"
 DEALS_BOARD_ID = "5030965668"
 
-# id -> clean snake_case field name
 WO_COLUMN_MAP = {
     "text_mm6qrxz1": "customer_name_code",
     "text_mm6qa33v": "serial_number",
@@ -68,6 +66,14 @@ DEAL_COLUMN_MAP = {
     "date_mm6qqf48": "created_date",
 }
 
+WO_NUMERIC_FIELDS = {
+    "amount_excl_gst", "amount_incl_gst", "billed_value_excl_gst", "billed_value_incl_gst",
+    "collected_amount_incl_gst", "amount_to_be_billed_excl_gst", "amount_to_be_billed_incl_gst",
+    "amount_receivable", "quantity_by_ops", "quantity_billed_till_date", "balance_in_quantity"
+}
+DEAL_NUMERIC_FIELDS = {"masked_deal_value"}
+
+
 def fetch_all_items(board_id):
     items = []
     cursor = None
@@ -106,8 +112,8 @@ def fetch_all_items(board_id):
             break
     return items
 
+
 def parse_number(text):
-    """Safely parse a numeric field. Handles blanks, #VALUE!, and stray characters."""
     if text is None or text.strip() == "":
         return None
     cleaned = text.strip()
@@ -118,8 +124,8 @@ def parse_number(text):
     except ValueError:
         return None
 
+
 def parse_quantity_with_unit(text):
-    """Splits values like '5360 HA' into (5360.0, 'HA'); plain '3000' into (3000.0, None)."""
     if text is None or text.strip() == "":
         return None, None
     match = re.match(r'^([\d,\.]+)\s*([A-Za-z]+)?$', text.strip())
@@ -130,6 +136,7 @@ def parse_quantity_with_unit(text):
         return float(num_part.replace(",", "")), unit_part
     except ValueError:
         return None, unit_part
+
 
 def clean_item(raw_item, column_map, numeric_fields, quantity_field=None):
     cv_by_id = {cv["id"]: cv["text"] for cv in raw_item["column_values"]}
@@ -149,29 +156,13 @@ def clean_item(raw_item, column_map, numeric_fields, quantity_field=None):
 
     return clean
 
-WO_NUMERIC_FIELDS = {
-    "amount_excl_gst","amount_incl_gst","billed_value_excl_gst","billed_value_incl_gst",
-    "collected_amount_incl_gst","amount_to_be_billed_excl_gst","amount_to_be_billed_incl_gst",
-    "amount_receivable","quantity_by_ops","quantity_billed_till_date","balance_in_quantity"
-}
-DEAL_NUMERIC_FIELDS = {"masked_deal_value"}
 
-if __name__ == "__main__":
-    print("Fetching Work Orders...")
+def load_live_data():
+    """Fetches and cleans fresh data directly from monday.com. Call this any time current data is needed."""
     raw_wo = fetch_all_items(WORK_ORDERS_BOARD_ID)
     clean_wo = [clean_item(i, WO_COLUMN_MAP, WO_NUMERIC_FIELDS, quantity_field="quantities_as_per_po_raw") for i in raw_wo]
 
-    print("Fetching Deals...")
     raw_deals = fetch_all_items(DEALS_BOARD_ID)
     clean_deals = [clean_item(i, DEAL_COLUMN_MAP, DEAL_NUMERIC_FIELDS) for i in raw_deals]
 
-    with open("clean_work_orders.json", "w") as f:
-        json.dump(clean_wo, f, indent=2)
-    with open("clean_deals.json", "w") as f:
-        json.dump(clean_deals, f, indent=2)
-
-    print(f"Cleaned {len(clean_wo)} work orders -> clean_work_orders.json")
-    print(f"Cleaned {len(clean_deals)} deals -> clean_deals.json")
-
-    print("\n--- Sample cleaned Work Order ---")
-    print(json.dumps(clean_wo[0], indent=2))
+    return clean_wo, clean_deals

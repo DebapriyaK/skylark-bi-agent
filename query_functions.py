@@ -1,14 +1,11 @@
 import json
 from datetime import datetime
+from monday_data import load_live_data
 
-with open("clean_work_orders.json") as f:
-    WORK_ORDERS = json.load(f)
-
-with open("clean_deals.json") as f:
-    DEALS = json.load(f)
+WORK_ORDERS, DEALS = load_live_data()
 
 
-def get_deals(sector=None, deal_status=None, deal_stage=None, 
+def get_deals(sector=None, deal_status=None, deal_stage=None,
               close_after=None, close_before=None):
     results = DEALS
     if sector:
@@ -24,7 +21,41 @@ def get_deals(sector=None, deal_status=None, deal_stage=None,
     return results
 
 
-def get_work_orders(sector=None, execution_status=None, 
+def get_deals_with_date_exclusion_note(sector=None, deal_status=None, deal_stage=None,
+                                         close_after=None, close_before=None):
+    """Same filtering as get_deals, but also reports how many records were excluded purely due to
+    missing tentative_close_date, so a 'zero results' from date filtering isn't misread as a confirmed
+    zero when the real cause is missing data."""
+    base_results = DEALS
+    if sector:
+        base_results = [d for d in base_results if d["sector_service"] and d["sector_service"].lower() == sector.lower()]
+    if deal_status:
+        base_results = [d for d in base_results if d["deal_status"] and d["deal_status"].lower() == deal_status.lower()]
+    if deal_stage:
+        base_results = [d for d in base_results if d["deal_stage"] and deal_stage.lower() in d["deal_stage"].lower()]
+
+    total_before_date_filter = len(base_results)
+    missing_date_count = sum(1 for d in base_results if not d["tentative_close_date"])
+
+    date_filtered = base_results
+    if close_after:
+        date_filtered = [d for d in date_filtered if d["tentative_close_date"] and d["tentative_close_date"] >= close_after]
+    if close_before:
+        date_filtered = [d for d in date_filtered if d["tentative_close_date"] and d["tentative_close_date"] <= close_before]
+
+    total_value = sum(d["masked_deal_value"] for d in date_filtered if d["masked_deal_value"] is not None)
+
+    return {
+        "matched_deals": date_filtered,
+        "matched_count": len(date_filtered),
+        "matched_total_value": total_value,
+        "total_before_date_filter": total_before_date_filter,
+        "excluded_due_to_missing_date": missing_date_count,
+        "note": f"{missing_date_count} of {total_before_date_filter} deals in scope have no tentative_close_date set, so their timing is unknown rather than confirmed outside the requested period."
+    }
+
+
+def get_work_orders(sector=None, execution_status=None,
                      start_after=None, start_before=None):
     results = WORK_ORDERS
     if sector:
@@ -37,12 +68,8 @@ def get_work_orders(sector=None, execution_status=None,
         results = [w for w in results if w["probable_start_date"] and w["probable_start_date"] <= start_before]
     return results
 
+
 def get_deal_summary_stats(deals, pipeline_view=False):
-    """
-    If pipeline_view=True, computes stats treating 'pipeline' as Open deals only
-    (standard CRM convention: pipeline = active/forward-looking deals, not closed outcomes).
-    The breakdown always shows full status context so nothing is hidden.
-    """
     total_deals = len(deals)
 
     status_breakdown = {}
@@ -104,7 +131,6 @@ def get_work_order_summary_stats(work_orders):
 
 
 def assess_data_quality(records, fields_to_check):
-    """Returns % completeness for each requested field, so answers can carry an honest caveat."""
     total = len(records)
     if total == 0:
         return {"total_records": 0, "field_completeness": {}}
@@ -120,8 +146,6 @@ def assess_data_quality(records, fields_to_check):
 
     return {"total_records": total, "field_completeness": completeness}
 
-
-from datetime import datetime
 
 def _days_between(date_str1, date_str2):
     try:
@@ -148,7 +172,7 @@ def match_work_order_to_deal(wo):
     else:
         pool = candidates
         match_basis = f"name only — sector mismatch (WO sector: {wo['sector']}, no deal with this name shares it)"
-        base_confidence = "medium"  # name matches but sector contradicts, so capped below "high"
+        base_confidence = "medium"
 
     if len(pool) == 1:
         return {
@@ -159,7 +183,6 @@ def match_work_order_to_deal(wo):
             "candidates_considered": len(pool)
         }
 
-    # Multiple candidates — try date proximity to disambiguate
     wo_po_date = wo.get("date_of_po_loi")
     scored = []
     for d in pool:
@@ -182,7 +205,6 @@ def match_work_order_to_deal(wo):
     best_deal, best_gap = dated[0]
 
     if len(dated) == 1 or (dated[1][1] - best_gap) >= 30:
-        # date proximity can only maintain or downgrade confidence, never upgrade past "high"
         final_confidence = "medium" if base_confidence == "high" else "low"
         return {
             "status": "matched",
@@ -200,26 +222,3 @@ def match_work_order_to_deal(wo):
         "candidates": pool,
         "candidates_considered": len(pool)
     }
-
-
-if __name__ == "__main__":
-    from collections import Counter
-    results = [match_work_order_to_deal(w) for w in WORK_ORDERS if w["name"] in set(d["name"] for d in DEALS)]
-    status_counts = Counter(r["status"] for r in results)
-    confidence_counts = Counter(r.get("confidence", "n/a") for r in results)
-    print("Match status breakdown:", dict(status_counts))
-    print("Confidence breakdown:", dict(confidence_counts))
-
-    # show a couple of examples
-    print("\n--- Sample matched (high confidence) ---")
-    for r in results:
-        if r["status"] == "matched" and r["confidence"] == "high":
-            print(json.dumps({"status": r["status"], "confidence": r["confidence"], "basis": r["basis"]}, indent=2))
-            break
-
-    print("\n--- Sample ambiguous ---")
-    for r in results:
-        if r["status"] == "ambiguous":
-            print(json.dumps({"status": r["status"], "reason": r["reason"], "candidates_considered": r["candidates_considered"]}, indent=2))
-            break
-    
