@@ -13,7 +13,7 @@ from query_functions import (
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-MODEL = "gpt-4o-mini"  # switch to "gpt-4o" for stronger reasoning if needed
+MODEL = "gpt-4o-mini"  
 
 TOOLS = [
     {
