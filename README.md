@@ -2,6 +2,8 @@
 
 An AI-powered conversational Business Intelligence agent that allows founders and business teams to ask natural-language questions about **sales pipeline, deals, work orders, billing, collections, and execution** using live monday.com data.
 
+Hosted Link: https://skylark-bi-agent-khmfsn8km6mtx4nc2j4xor.streamlit.app/
+
 ## Overview
 
 The goal was to build a lightweight BI interface where a user can ask questions such as:
