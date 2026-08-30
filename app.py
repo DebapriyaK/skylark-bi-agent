@@ -11,6 +11,20 @@ for secret_name in ("OPENAI_API_KEY", "MONDAY_API_TOKEN"):
     if not os.getenv(secret_name) and secret_name in st.secrets:
         os.environ[secret_name] = str(st.secrets[secret_name])
 
+missing_secrets = [
+    secret_name
+    for secret_name in ("OPENAI_API_KEY", "MONDAY_API_TOKEN")
+    if not os.getenv(secret_name)
+]
+
+if missing_secrets:
+    st.error(
+        "Missing required deployment secrets: "
+        + ", ".join(missing_secrets)
+        + ". Add them in Streamlit Cloud under Manage app > Settings > Secrets, then reboot the app."
+    )
+    st.stop()
+
 from agent import chat
 
 st.markdown(
